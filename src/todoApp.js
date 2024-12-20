@@ -30,7 +30,7 @@ const TododAPP = () => {
   const getAllActivites = async () => {
     try {
       const res = await axios.post(
-        "todo-ingo.up.railway.app/todoApp/findAllTodoForTheDay",
+        "https://todo-ingo.up.railway.app/todoApp/findAllTodoForTheDay",
         { date: data }
       );
       setTableData(res?.data);
@@ -46,7 +46,7 @@ const TododAPP = () => {
     console.log(createData, "createData");
     try {
       const res = await axios.post(
-        "todo-ingo.up.railway.app/todoApp/createTodoActivity",
+        "https://todo-ingo.up.railway.app/todoApp/createTodoActivity",
         { ...createData, date: data }
       );
       getAllActivites();
@@ -58,7 +58,7 @@ const TododAPP = () => {
     console.log(editData, "editData");
     try {
       const res = await axios.put(
-        "todo-ingo.up.railway.app/todoApp/updateTodo",
+        "https://todo-ingo.up.railway.app/todoApp/updateTodo",
         { ...editData, date: data, id }
       );
       getAllActivites();
@@ -70,7 +70,7 @@ const TododAPP = () => {
     console.log(id, "removeTodoActivity");
     try {
       const res = await axios.delete(
-       `todo-ingo.up.railway.app/todoApp/removeTodo/`+id
+       `https://todo-ingo.up.railway.app/todoApp/removeTodo/`+id
       );
       getAllActivites();
     } catch (err) {}
