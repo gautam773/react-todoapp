@@ -37,10 +37,10 @@ const TododAPP = () => {
     } catch (err) {}
   };
 
-  // useEffect(() => {
-  //   console.log("useEffect")
-  //   getAllActivites();
-  // }, []);
+  useEffect(() => {
+    console.log("useEffect")
+    getAllActivites();
+  }, []);
   
   const onsubmit = async () => {
     console.log(createData, "createData");
