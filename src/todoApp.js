@@ -18,15 +18,13 @@ const TododAPP = () => {
     activity: "",
     status: "New",
   });
-
-  let dropdownValues = ["New", "InProgress", "Completed"];
-
-  
+  const [dropdownValues, setDropdownValues] = useState([]);
+  // let dropdownValues = ["New", "InProgress", "Completed"];
+  let [msg, setMsg] = useState("");
 
   const onChangeDate = (event) => {
     setData(moment(event.target.value).format("yyyy-MM-DD"));
   };
-
   const getAllActivites = async () => {
     try {
       const res = await axios.post(
@@ -38,18 +36,30 @@ const TododAPP = () => {
   };
 
   useEffect(() => {
-    console.log("useEffect")
+    const fetchTodoStatus = async (id) => {
+      try {
+        const res = await axios.get(
+          `http://144.24.137.81/todoApp/fetchStatusList`
+        );
+        setDropdownValues(res?.data);
+      } catch (err) {}
+    };
+
+    console.log("useEffect");
     getAllActivites();
+    fetchTodoStatus();
   }, [data]);
-  
+
   const onsubmit = async () => {
-    console.log(createData, "createData");
     try {
       const res = await axios.post(
         "http://144.24.137.81/todoApp/createTodoActivity",
         { ...createData, date: data }
       );
-      getAllActivites();
+      console.log(res?.data, "createData");
+      setCreateData({ time: "", activity: "", status: "New" });
+      // setMsg(res?.data);
+      alert(res?.data);
     } catch (err) {}
     setIsCreate(false);
   };
@@ -57,11 +67,13 @@ const TododAPP = () => {
   const UpdateStatus = async (id) => {
     console.log(editData, "editData");
     try {
-      const res = await axios.put(
-        "http://144.24.137.81/todoApp/updateTodo",
-        { ...editData, date: data, id }
-      );
-      getAllActivites();
+      const res = await axios.put("http://144.24.137.81/todoApp/updateTodo", {
+        ...editData,
+        date: data,
+        id,
+      });
+      // setMsg(res?.data);
+      alert(res?.data);
       setIsEdit("");
     } catch (err) {}
   };
@@ -70,12 +82,14 @@ const TododAPP = () => {
     console.log(id, "removeTodoActivity");
     try {
       const res = await axios.delete(
-       `http://144.24.137.81/todoApp/removeTodo/`+id
+        `http://144.24.137.81/todoApp/removeTodo/` + id
       );
-      getAllActivites();
+      // setMsg(res?.data);
+      alert(res?.data);
     } catch (err) {}
   };
-console.log("ren der")
+
+  console.log("ren der", tableData);
   return (
     <div width="200px">
       <br />
@@ -98,7 +112,7 @@ console.log("ren der")
       </button>
 
       {isCreate && (
-        <dialog open>
+        <dialog open style={{ textAlign: "left" }}>
           Time:{" "}
           <input
             type="time"
@@ -129,10 +143,15 @@ console.log("ren der")
             }}
           >
             {dropdownValues?.map((x, i) => {
-              return <option key={i} value={x}>{x}</option>;
+              return (
+                <option key={i} value={x}>
+                  {x}
+                </option>
+              );
             })}
           </select>
           <br />
+          <button onClick={() => setIsCreate(false)}>Cancel</button>
           <button onClick={() => onsubmit()}>Submit</button>
         </dialog>
       )}
@@ -151,7 +170,6 @@ console.log("ren der")
             {tableData?.map((x, id) => {
               return (
                 <tr key={id}>
-                
                   {isEdit === id ? (
                     <>
                       <td>
@@ -169,17 +187,17 @@ console.log("ren der")
                         />
                       </td>
                       <td>
-                      <input
-                        type="text"
-                        id="activity"
-                        value={editData.activity}
-                        onChange={(e) => {
-                          setEditData({
-                            ...editData,
-                            activity: e.target.value,
-                          });
-                        }}
-                      />
+                        <input
+                          type="text"
+                          id="activity"
+                          value={editData.activity}
+                          onChange={(e) => {
+                            setEditData({
+                              ...editData,
+                              activity: e.target.value,
+                            });
+                          }}
+                        />
                       </td>
                       <td>
                         <select
@@ -214,8 +232,8 @@ console.log("ren der")
                     </>
                   ) : (
                     <>
-                    <td>{x.time}</td>
-                    <td>{x.activity}</td>
+                      <td>{x.time}</td>
+                      <td>{x.activity}</td>
                       <td>{x.status}</td>
                       <td>
                         <button
@@ -232,7 +250,14 @@ console.log("ren der")
                         >
                           Edit
                         </button>
-                        <button id={id} onClick={()=>{removeTodoActivity(x.id)}}>Remove</button>
+                        <button
+                          id={id}
+                          onClick={() => {
+                            removeTodoActivity(x.id);
+                          }}
+                        >
+                          Remove
+                        </button>
                       </td>
                     </>
                   )}
